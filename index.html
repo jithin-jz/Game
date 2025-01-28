@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Prediction Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="max-w-2xl mx-auto px-4 py-6 text-center">
+        <h1 class="text-2xl sm:text-3xl font-bold text-blue-500">Color Prediction Game</h1>
+        <div class="mt-4 bg-gray-800 p-4 rounded-lg">
+            <p class="text-lg">Balance</p>
+            <p id="balance" class="text-2xl font-bold">20</p>
+        </div>
+        <div class="mt-4">
+            <label for="name" class="block text-left">Your Name:</label>
+            <input type="text" id="name" class="w-full bg-gray-700 p-2 rounded-lg text-white">
+        </div>
+        <div class="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+            <button class="bg-green-500 px-6 py-2 rounded-lg" onclick="placeBet('green')">Join Green</button>
+            <button class="bg-purple-600 px-6 py-2 rounded-lg" onclick="placeBet('violet')">Join Violet</button>
+            <button class="bg-red-600 px-6 py-2 rounded-lg" onclick="placeBet('red')">Join Red</button>
+        </div>
+        <div class="mt-6 bg-gray-800 p-4 rounded-lg text-left">
+            <h2 class="text-xl font-bold text-blue-500">Results</h2>
+            <ul id="results" class="mt-2"></ul>
+        </div>
+    </div>
+
+    <script>
+        let balance = 20;
+        let betCount = 0;
+
+        function placeBet(color) {
+            if (!document.getElementById("name").value.trim()) {
+                alert("Please enter your name.");
+                return;
+            }
+
+            if (balance <= 0) {
+                alert("Insufficient balance. Recharge 100 to get 200 bonus.");
+                return;
+            }
+            
+            betCount++;
+            let won = betCount <= 3;
+            let amount = 10;
+            let resultText = `You chose ${color}. `;
+            
+            if (won) {
+                balance += amount;
+                resultText += "You won!";
+            } else {
+                balance -= amount;
+                resultText += "You lost!";
+            }
+            
+            balance = Math.max(balance, 0);
+            document.getElementById("balance").innerText = balance;
+            let li = document.createElement("li");
+            li.innerText = resultText;
+            document.getElementById("results").prepend(li);
+
+            if (balance <= 0) {
+                addWarningMessage();
+                alert("Insufficient balance. Recharge 100 to get 200 bonus.");
+            }
+        }
+
+        function recharge() {
+            balance += 100;
+            balance += 200; // Adding bonus
+            document.getElementById("balance").innerText = balance;
+            alert("Recharge successful! You received a 200 bonus.");
+        }
+
+        function addWarningMessage() {
+            const warningHTML = `
+                <div class="mt-6 bg-gray-800 p-4 rounded-lg text-left">
+                    <h2 class="text-xl font-bold text-red-500">Beware of Online Prediction Games</h2>
+                    <p class="mt-2 text-gray-300">Many illegal color prediction games manipulate users by making them win initially and then gradually draining their balance. These games create an illusion of easy money but are designed to make you lose in the long run. Once you get addicted, they encourage you to recharge more and more, trapping you in a cycle of financial loss. Always be cautious and avoid such scams.</p>
+                </div>
+            `;
+            const resultsSection = document.getElementById("results");
+            let div = document.createElement("div");
+            div.innerHTML = warningHTML;
+            resultsSection.prepend(div);
+        }
+    </script>
+</body>
+</html>
